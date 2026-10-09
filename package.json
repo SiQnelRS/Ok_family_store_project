@@ -1,0 +1,48 @@
+{
+  "name": "ok-family-store",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build -w @ok-family/shared && npm run build -w @ok-family/database && npm run build -w @ok-family/service-kit && npm run build -w @ok-family/auth-service -w @ok-family/catalog-service -w @ok-family/commerce-service -w @ok-family/api-gateway -w @ok-family/frontend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "test": "node --test tests/domain.test.mjs apps/catalog-service/test/*.test.mjs apps/api-gateway/test/*.test.mjs",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx packages/database/prisma/seed.ts",
+    "db:validate": "prisma validate",
+    "db:studio": "prisma studio",
+    "infra:up": "docker compose up -d postgres",
+    "infra:down": "docker compose down",
+    "test:database": "node --test tests/database.integration.test.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "@types/node": "^24.0.0",
+    "concurrently": "^9.2.0",
+    "dotenv": "^17.2.0",
+    "eslint": "^10.12.0",
+    "globals": "^16.5.0",
+    "prisma": "^7.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.0"
+  },
+  "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2"
+    },
+    "prisma": {
+      "mysql2": "3.24.5"
+    }
+  }
+}

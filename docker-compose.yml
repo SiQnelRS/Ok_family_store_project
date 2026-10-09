@@ -1,0 +1,21 @@
+name: ok-family
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: okfamily
+      POSTGRES_PASSWORD: okfamily_local
+      POSTGRES_DB: okfamily
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U okfamily -d okfamily"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
