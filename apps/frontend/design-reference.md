@@ -32,3 +32,7 @@ Los archivos de public/figma se descargaron desde get_design_context. No se util
 | hero-mobile-1..4.svg  | 37:19, 37:22, 37:25, 37:28  | Seis posiciones del hero; cada SVG 46.55 × 219.64, repetición 1/2/3/4/1/2.                                   |
 
 Los elementos del hero son ilustración editorial, no existencias. La galería de detalle utiliza las imágenes que proporciona cada publicación. CSS adapta el tamaño del contenedor ilustrado a tabletas y móviles pequeños sin editar ni deformar los SVG.
+
+## Administración del catálogo
+
+El panel privado usa el frame 6:58 (Administración · Publicar lote mayoreo), consultado con get_design_context. Reutiliza Inter y los tokens existentes. Sidebar, cabecera, tarjetas y formulario respetan su estructura; los controles adicionales hacen operable el CRUD de productos individuales y lotes. No hay activos gráficos estáticos nuevos en ese frame. Consulta admin-guide.md para su operación.

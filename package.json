@@ -23,7 +23,9 @@
     "db:studio": "prisma studio",
     "infra:up": "docker compose up -d postgres",
     "infra:down": "docker compose down",
-    "test:database": "node --test tests/database.integration.test.mjs"
+    "test:database": "node --test tests/database.integration.test.mjs",
+    "admin:create": "node scripts/create-admin.mjs",
+    "test:admin": "node --test tests/admin.integration.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
@@ -43,6 +45,9 @@
     },
     "prisma": {
       "mysql2": "3.24.5"
+    },
+    "@nestjs/platform-express": {
+      "multer": "2.5.0"
     }
   }
 }

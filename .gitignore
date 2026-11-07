@@ -13,3 +13,6 @@ packages/database/src/generated/
 playwright-report/
 test-results/
 ok-family-plan-arquitectura.md
+
+# Fotos cargadas por el panel (persistencia local)
+.data/

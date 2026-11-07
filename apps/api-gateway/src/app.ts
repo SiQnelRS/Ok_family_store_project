@@ -1,3 +1,4 @@
+import { adminGatewayModule } from "./admin.js";
 import { Controller, Get, Inject, Module, Param, Query, ServiceUnavailableException } from "@nestjs/common";
 import { CatalogQueryDto, createHttpApplication, health, healthModule, ProductSlugDto, ServiceSecurityModule } from "@ok-family/service-kit";
 import type { HttpApplicationOptions } from "@ok-family/service-kit";
@@ -39,7 +40,7 @@ class GatewayModule {}
 export function createApp(dependencies: GatewayDependencies, options?: HttpApplicationOptions) {
   return createHttpApplication({
     module: GatewayModule,
-    imports: [ServiceSecurityModule, healthModule("api-gateway")],
+    imports: [adminGatewayModule(dependencies), ServiceSecurityModule, healthModule("api-gateway")],
     controllers: [ProductsController, ReadinessController],
     providers: [{ provide: GATEWAY_CLIENT, useValue: new GatewayClient(dependencies) }],
   }, options);
