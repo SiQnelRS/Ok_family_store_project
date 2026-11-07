@@ -1,3 +1,4 @@
+import { AdminCatalogModule } from "./admin-controller.js";
 import { Controller, Get, Inject, Module, NotFoundException, Param, Query, ServiceUnavailableException } from "@nestjs/common";
 import { CatalogQueryDto, createHttpApplication, health, healthModule, ProductSlugDto, ServiceSecurityModule } from "@ok-family/service-kit";
 import type { HttpApplicationOptions } from "@ok-family/service-kit";
@@ -56,7 +57,7 @@ class CatalogModule {}
 export function createApp(repository?: CatalogRepository, options?: HttpApplicationOptions) {
   return createHttpApplication({
     module: CatalogModule,
-    imports: [ServiceSecurityModule, healthModule("catalog-service")],
+    imports: [AdminCatalogModule, ServiceSecurityModule, healthModule("catalog-service")],
     controllers: [ProductsController, ReadinessController],
     providers: [{
       provide: CATALOG_REPOSITORY,

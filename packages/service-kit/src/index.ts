@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Controller, Get, Module, ValidationPipe } from "@nestjs/common";
 import type { DynamicModule, INestApplication, LogLevel, Type } from "@nestjs/common";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { APP_GUARD, NestFactory } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import type { HealthResponse } from "@ok-family/shared";
@@ -8,6 +9,9 @@ import { config } from "dotenv";
 import helmet from "helmet";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+export * from "./admin-security.js";
+export * from "./admin-validation.js";
 
 export { CatalogQueryDto, ProductSlugDto } from "./validation.js";
 
@@ -70,10 +74,15 @@ export async function createHttpApplication(
   rootModule: Type<unknown> | DynamicModule,
   options: HttpApplicationOptions = {},
 ): Promise<INestApplication> {
-  const app = await NestFactory.create(rootModule, {
+  const app = await NestFactory.create<NestExpressApplication>(rootModule, {
     logger: options.logger ?? ["error", "warn", "log"],
   });
+  app.useBodyParser("json", { limit: "8mb" });
   app.use(helmet());
+  app.use((request: { path: string }, response: { setHeader: (key: string, value: string) => void }, next: () => void) => {
+    if (/^\/api\/(?:admin|auth\/admin)(?:\/|$)/.test(request.path)) response.setHeader("Cache-Control", "no-store");
+    next();
+  });
   app.enableCors({
     origin: options.webOrigin ?? process.env.WEB_ORIGIN ?? "http://localhost:3000",
     methods: ["GET", "HEAD", "OPTIONS"],
