@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
+import { StoreHeader } from "../components/store-header";
+import "@fontsource-variable/inter";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ok Family Store · Hallazgos únicos en Durango",
+    default: "Ok Family Store · Productos y lotes en Durango",
     template: "%s | Ok Family Store",
   },
   description:
@@ -20,39 +22,24 @@ export default function RootLayout({
         <a className="skip-link" href="#contenido">
           Saltar al contenido
         </a>
-        <div className="topbar">
-          De Estados Unidos a Durango. Encuentra algo para ti.
-        </div>
-        <header className="site-header shell">
-          <Link className="brand" href="/" aria-label="Ok Family Store, inicio">
-            <span className="brand-symbol">
-              ok<span>✳</span>
-            </span>
-            <span className="brand-name">
-              OK FAMILY<span>STORE · DURANGO</span>
-            </span>
-          </Link>
-          <nav aria-label="Navegación principal">
-            <Link href="/#catalogo">Catálogo</Link>
-            <Link href="/?type=LOTE#catalogo">Lotes</Link>
-            <a className="visit-link" href="#visitanos">
-              Visítanos <span aria-hidden="true">↗</span>
-            </a>
-          </nav>
-        </header>
+        <Suspense fallback={<div className="header-placeholder" />}>
+          <StoreHeader />
+        </Suspense>
         <main id="contenido">{children}</main>
         <footer id="visitanos" className="site-footer">
           <div className="shell footer-grid">
             <div>
-              <p className="eyebrow">TE ESPERAMOS EN TIENDA</p>
-              <h2>
-                Ven a encontrar
-                <br />
-                tu próximo hallazgo.
-              </h2>
+              <img
+                src="/figma/ok-family-logo.png"
+                width={195}
+                height={63}
+                alt="Ok Family Store"
+                loading="lazy"
+              />
+              <p>Ropa y más para todos.</p>
             </div>
             <div>
-              <h3>Dónde estamos</h3>
+              <h2>VISÍTANOS</h2>
               <address>
                 Boulevard de las Rosas 233
                 <br />
@@ -60,16 +47,14 @@ export default function RootLayout({
               </address>
             </div>
             <div>
-              <h3>Nuestro horario</h3>
+              <h2>HORARIO DE TIENDA</h2>
               <p>12:00 p. m. a 8:30 p. m.</p>
-              <p className="footer-note">
-                Productos únicos. Nuevas posibilidades.
-              </p>
+              <p>Productos únicos y lotes completos.</p>
             </div>
           </div>
           <div className="shell footer-bottom">
-            <span>OK FAMILY STORE</span>
-            <span>Hecho para encontrar algo especial.</span>
+            <span>OK FAMILY STORE · DURANGO</span>
+            <span>La disponibilidad de las publicaciones puede cambiar.</span>
           </div>
         </footer>
       </body>
