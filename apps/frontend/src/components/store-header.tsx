@@ -12,7 +12,8 @@ export function StoreHeader() {
   const menuButton = useRef<HTMLButtonElement>(null);
   const searchButton = useRef<HTMLButtonElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
-  const exploring = pathname !== "/" || params.size > 0;
+  const exploring = pathname === "/catalogo" || pathname.startsWith("/catalogo/") || pathname.startsWith("/productos/") || (pathname === "/" && params.size > 0);
+  const home = pathname === "/" && params.size === 0;
 
   useEffect(() => {
     if (searchOpen) searchInput.current?.focus();
@@ -39,7 +40,7 @@ export function StoreHeader() {
             <Link href="/catalogo">CATÁLOGO</Link>
             <Link href="/catalogo?type=LOTE">LOTES DE ROPA</Link>
             <Link href="/catalogo#filtros">CATEGORÍAS</Link>
-            <a href="#visitanos">VISÍTANOS</a>
+            <Link href="/nosotros">NOSOTROS</Link>
           </nav>
           <button
             ref={menuButton}
@@ -87,14 +88,7 @@ export function StoreHeader() {
                 ⌕
               </span>
             </button>
-            <button
-              className="future-action desktop-only"
-              type="button"
-              disabled
-              title="Mi cuenta estará disponible próximamente"
-            >
-              MI CUENTA
-            </button>
+            <Link className="account-header-link desktop-only" href="/cuenta">MI CUENTA</Link>
             <button
               className="future-action"
               type="button"
@@ -133,9 +127,7 @@ export function StoreHeader() {
             <Link href="/catalogo?type=PRODUCTO" onClick={closePanels}>
               Productos individuales
             </Link>
-            <a href="#visitanos" onClick={closePanels}>
-              Visítanos en Durango
-            </a>
+            <Link href="/nosotros" onClick={closePanels}>Sobre nosotros</Link>
           </nav>
         )}
         {searchOpen && (
@@ -177,7 +169,7 @@ export function StoreHeader() {
       <nav className="mobile-tabbar" aria-label="Navegación inferior">
         <Link
           href="/"
-          aria-current={!exploring ? "page" : undefined}
+          aria-current={home ? "page" : undefined}
           onClick={closePanels}
         >
           <span aria-hidden="true">⌂</span>Inicio
@@ -189,14 +181,9 @@ export function StoreHeader() {
         >
           <span aria-hidden="true">▦</span>Explorar
         </Link>
-        <button
-          type="button"
-          disabled
-          title="Próximamente"
-          aria-label="Cuenta, próximamente"
-        >
+        <Link href="/cuenta" aria-current={pathname === "/cuenta" ? "page" : undefined} onClick={closePanels}>
           <span aria-hidden="true">♙</span>Cuenta
-        </button>
+        </Link>
         <button
           type="button"
           disabled

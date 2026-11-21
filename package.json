@@ -25,7 +25,9 @@
     "infra:down": "docker compose down",
     "test:database": "node --test tests/database.integration.test.mjs",
     "admin:create": "node scripts/create-admin.mjs",
-    "test:admin": "node --test tests/admin.integration.test.mjs"
+    "test:admin": "node --test tests/admin.integration.test.mjs",
+    "test:customers": "node --test tests/customer-admin.integration.test.mjs",
+    "test:account": "node --test tests/customer-account.integration.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",

@@ -53,6 +53,7 @@ export function AdminShell({
           >
             Agregar producto
           </Link>
+          <Link href="/admin/clientes" aria-current={pathname === "/admin/clientes" ? "page" : undefined}>Clientes</Link>
           <a href="/" target="_blank" rel="noreferrer">
             Ver mi tienda ↗
           </a>

@@ -45,3 +45,7 @@ Las fotos nuevas se guardan en `.data/uploads/`, fuera del repositorio. Conserva
 El panel usa la estructura visual del frame Figma 6:58: barra lateral oscura de 247 px, cabecera blanca de 79 px, fondo #f6f6f4, tarjetas y formulario a dos columnas. La marca es texto nativo del diseño; no incorpora activos gráficos nuevos. El listado y el acceso extienden esos estilos. Los campos adicionales de productos individuales, existencias y visibilidad completan el CRUD solicitado. Se adapta a celular.
 
 Se actualizaron dependencias HTTP compatibles y se fija temporalmente multer 2.5.0 bajo @nestjs/platform-express para incorporar su corrección de seguridad. La auditoría mantiene avisos moderados en herramientas de lint; no se forzaron cambios de versión principal de esas herramientas.
+
+## Clientes
+
+En **Clientes** puedes buscar cuentas por nombre o correo. **Desactivar** cierra sus sesiones e impide que ingresen hasta que pulses **Reactivar**; las sesiones anteriores no se restauran. Cada cambio de estado queda registrado.
