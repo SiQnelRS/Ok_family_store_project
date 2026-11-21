@@ -18,7 +18,13 @@ import {
 } from "@nestjs/common";
 import {
   AdminIdDto,
+  AdminCustomerQueryDto,
+  AdminCustomerStatusDto,
   AdminLoginDto,
+  CustomerLoginDto,
+  CustomerRegisterDto,
+  CustomerProfileDto,
+  CustomerPasswordDto,
   AdminProductDto,
   AdminUpdateDto,
   AdminDeleteDto,
@@ -114,6 +120,26 @@ class AuthProxyController {
   ) {
     return this.proxy.json("authUrl", "/api/auth/admin/logout", "POST", token);
   }
+}
+@Controller("auth/customer")
+class CustomerAuthProxyController {
+  constructor(private readonly proxy: AdminProxy) {}
+  @Post("register") register(@Body() input: CustomerRegisterDto) { return this.proxy.json("authUrl", "/api/auth/customer/register", "POST", undefined, input); }
+  @Post("login") @HttpCode(200) login(@Body() input: CustomerLoginDto) { return this.proxy.json("authUrl", "/api/auth/customer/login", "POST", undefined, input); }
+  @Get("session") session(@Headers("authorization") token?: string) { return this.proxy.json("authUrl", "/api/auth/customer/session", "GET", token); }
+  @Post("profile") @HttpCode(200) profile(@Headers("authorization") token: string | undefined, @Body() input: CustomerProfileDto) { return this.proxy.json("authUrl", "/api/auth/customer/profile", "POST", token, input); }
+  @Post("password") @HttpCode(200) password(@Headers("authorization") token: string | undefined, @Body() input: CustomerPasswordDto) { return this.proxy.json("authUrl", "/api/auth/customer/password", "POST", token, input); }
+  @Post("logout") @HttpCode(200) logout(@Headers("authorization") token?: string) { return this.proxy.json("authUrl", "/api/auth/customer/logout", "POST", token); }
+}
+@Controller("admin/customers")
+class AdminCustomersProxyController {
+  constructor(private readonly proxy: AdminProxy) {}
+  @Get() list(@Query() query: AdminCustomerQueryDto, @Headers("authorization") token?: string) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) if (value !== undefined) params.set(key, String(value));
+    return this.proxy.json("authUrl", "/api/admin/customers?" + params, "GET", token);
+  }
+  @Patch(":id") change(@Param() params: AdminIdDto, @Body() body: AdminCustomerStatusDto, @Headers("authorization") token?: string) { return this.proxy.json("authUrl", "/api/admin/customers/" + params.id, "PATCH", token, body); }
 }
 @Controller("admin/products")
 class ProductsProxyController {
@@ -214,6 +240,8 @@ export function adminGatewayModule(
     module: AdminGatewayModule,
     controllers: [
       AuthProxyController,
+      CustomerAuthProxyController,
+      AdminCustomersProxyController,
       ProductsProxyController,
       ImagesProxyController,
       MediaProxyController,

@@ -15,7 +15,7 @@ Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un
 - Validación de parámetros, cabeceras de seguridad, CORS y límite de solicitudes.
 - Compilación, comprobación de tipos, análisis estático y pruebas automatizadas.
 
-**Todavía no hay registro o inicio de sesión de clientes, carrito, reservas operativas, cobro ni webhooks. La prevención de doble venta está pendiente de implementación y pruebas.** Esta base no está lista para recibir compras reales.
+**Ya hay registro e inicio de sesión de clientes con correo y contraseña. Todavía no hay recuperación de contraseña, carrito, reservas operativas, cobro ni webhooks. La prevención de doble venta está pendiente de implementación y pruebas.** Esta base no está lista para recibir compras reales.
 
 ## Requisitos
 
@@ -57,6 +57,10 @@ Las tres publicaciones cargadas por `db:seed` son ejemplos, marcados con `isDemo
 | Catalog | `http://127.0.0.1:4002` | Lectura de publicaciones desde PostgreSQL |
 | Commerce | `http://127.0.0.1:4003` | Estructura del servicio y salud |
 | PostgreSQL | `127.0.0.1:55432` | Persistencia de desarrollo |
+
+## Cuenta de clientes
+
+En /cuenta los clientes pueden registrarse, iniciar sesión y cerrarla. La contraseña requiere al menos 12 caracteres; la sesión dura 12 horas y se revoca al cerrar sesión. Desde su cuenta, cada cliente puede actualizar su nombre y cambiar su contraseña proporcionando la actual; al cambiarla se cierran todas sus sesiones. Las cuentas de clientes no pueden acceder a administración. La recuperación de contraseña y el inicio con Google se incorporarán después.
 
 ## Panel del dueño
 

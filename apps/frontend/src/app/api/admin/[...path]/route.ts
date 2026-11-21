@@ -36,6 +36,10 @@ async function handle(request: Request, context: Context) {
       ? "/api/auth/admin/login"
       : joined === "logout" && method === "POST"
         ? "/api/auth/admin/logout"
+        : joined === "customers" && method === "GET"
+          ? "/api/admin/customers"
+          : /^customers\/[a-f0-9-]{36}$/.test(joined) && method === "PATCH"
+            ? "/api/admin/" + joined
         : joined === "images" && method === "POST"
           ? "/api/admin/images"
           : joined === "products" && ["GET", "POST"].includes(method)
