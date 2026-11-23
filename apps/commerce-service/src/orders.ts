@@ -72,7 +72,7 @@ export class OrdersService {
             const coverage = localCoverage(address.postalCode);
             if (coverage.status !== "available") throw new ConflictException("Entrega no disponible para esta dirección.");
             shippingInCents = coverage.priceInCents!;
-            const {createdAt, updatedAt, ...snapshot} = address;
+            const {createdAt: _createdAt, updatedAt: _updatedAt, ...snapshot} = address;
             destination = {...snapshot, method: "delivery"};
           }
           const items = [];
