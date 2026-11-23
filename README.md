@@ -2,7 +2,7 @@
 
 Base de desarrollo para la tienda de productos y lotes de disponibilidad limitada descrita en [el plan original](ok-family-plan-arquitectura.md).
 
-Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un gateway y tres servicios NestJS separados. Auth gestiona el acceso privado del administrador; Commerce expone su estado de ejecución mientras se implementan las compras.
+Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un gateway y tres servicios NestJS separados. Auth gestiona el acceso privado del administrador; Commerce gestiona el carrito, las direcciones y la consulta de cobertura local.
 
 ## Alcance
 
@@ -15,7 +15,7 @@ Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un
 - Validación de parámetros, cabeceras de seguridad, CORS y límite de solicitudes.
 - Compilación, comprobación de tipos, análisis estático y pruebas automatizadas.
 
-**Ya hay registro e inicio de sesión de clientes con correo y contraseña. Todavía no hay recuperación de contraseña, carrito, reservas operativas, cobro ni webhooks. La prevención de doble venta está pendiente de implementación y pruebas.** Esta base no está lista para recibir compras reales.
+**Ya hay registro e inicio de sesión de clientes con correo y contraseña. Todavía no hay recuperación de contraseña, cobro ni webhooks. La creación de pedidos aparta las existencias en PostgreSQL.** Esta base no está lista para recibir compras reales.
 
 ## Requisitos
 
@@ -55,13 +55,20 @@ Las tres publicaciones cargadas por `db:seed` son ejemplos, marcados con `isDemo
 | API Gateway | `http://127.0.0.1:4000` | Entrada HTTP y acceso al catálogo |
 | Auth | `http://127.0.0.1:4001` | Acceso y sesiones de administración |
 | Catalog | `http://127.0.0.1:4002` | Lectura de publicaciones desde PostgreSQL |
-| Commerce | `http://127.0.0.1:4003` | Estructura del servicio y salud |
+| Commerce | `http://127.0.0.1:4003` | Carrito, direcciones y cobertura local |
 | PostgreSQL | `127.0.0.1:55432` | Persistencia de desarrollo |
 
 ## Cuenta de clientes
 
 En /cuenta los clientes pueden registrarse, iniciar sesión y cerrarla. La contraseña requiere al menos 12 caracteres; la sesión dura 12 horas y se revoca al cerrar sesión. Desde su cuenta, cada cliente puede actualizar su nombre y cambiar su contraseña proporcionando la actual; al cambiarla se cierran todas sus sesiones. Las cuentas de clientes no pueden acceder a administración. La recuperación de contraseña y el inicio con Google se incorporarán después.
 
+## Carrito, entrega local y recogida en tienda
+
+En /carrito, los clientes pueden elegir entre entrega a domicilio y recoger en tienda. Para recoger, el sitio muestra la dirección del local —Boulevard de las Rosas 233, Jardines de Durango, Durango— y su horario publicado, de 12:00 p. m. a 8:30 p. m. Esta opción no añade costo de envío.
+
+El carrito consulta los precios y existencias actuales del catálogo y calcula los importes en el servidor. Al pulsar **Crear pedido y reservar**, Commerce guarda los precios, el destino y las cantidades, aparta las unidades durante 15 minutos y vacía el carrito en una transacción. En /cuenta/pedidos puedes ver y cancelar el pedido. Commerce libera las reservas vencidas al iniciar y cada 15 segundos. El cobro sigue pendiente.
+
+La cobertura y las tarifas de entrega local están pendientes de definir. Cuando el negocio facilite sus zonas y tarifas, configura LOCAL_DELIVERY_RATES_JSON en el entorno de Commerce con un objeto que relacione códigos postales de cinco dígitos con importes en centavos, por ejemplo: LOCAL_DELIVERY_RATES_JSON={"34000":8000}. Ese valor es únicamente un ejemplo técnico, no una tarifa vigente. Reinicia Commerce tras cambiar la configuración. Una configuración vacía muestra cobertura pendiente; un código ausente en una configuración no vacía se considera fuera de cobertura.
 ## Panel del dueño
 
 Abre [http://localhost:3000/admin](http://localhost:3000/admin). El acceso temporal está en el archivo privado `.env.admin.local`, generado por `npm.cmd run admin:create`. Si el usuario ya existe, el comando conserva su contraseña y permisos.

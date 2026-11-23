@@ -19,7 +19,7 @@ Los datos, imágenes, precios, cantidades y estados siguen viniendo de la API. L
 
 El catálogo mantiene búsqueda, categoría, tipo de publicación, paginación y estados de error/vacío. Los enlaces anteriores /?q=..., /?type=... y /?page=... continúan funcionando. /catalogo ofrece la misma consulta con el layout del mockup.
 
-Los filtros por temporada, talla y tamaño de lote del diseño todavía no existen en la API: se muestran los filtros operativos de búsqueda, categoría y tipo. Cuenta, bolsa y compra están deshabilitados y señalados como próximos. El domicilio y horario existentes permanecen en el pie de página.
+Los filtros por temporada, talla y tamaño de lote del diseño todavía no existen en la API: se muestran los filtros operativos de búsqueda, categoría y tipo. Cuenta, carrito y compra están deshabilitados y señalados como próximos. El domicilio y horario existentes permanecen en el pie de página.
 
 ## Recursos estáticos
 

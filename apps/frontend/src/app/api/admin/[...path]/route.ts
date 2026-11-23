@@ -34,6 +34,7 @@ async function handle(request: Request, context: Context) {
   const routes =
     joined === "login" && method === "POST"
       ? "/api/auth/admin/login"
+      : /^orders\/[a-f0-9-]{36}$/.test(joined) && method === "PATCH" ? "/api/admin/" + joined
       : joined === "logout" && method === "POST"
         ? "/api/auth/admin/logout"
         : joined === "customers" && method === "GET"

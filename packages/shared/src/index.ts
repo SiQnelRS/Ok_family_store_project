@@ -42,3 +42,5 @@ export function formatMoney(amountInCents: number): string {
 export interface AdminIdentity { id: string; name: string; email: string; role: "ADMIN" }
 export interface AdminProduct extends ProductSummary { published: boolean; reservedQuantity: number; soldQuantity: number; updatedAt: string }
 export interface AdminCatalogResponse { items: AdminProduct[]; total: number; page: number; pageSize: number; counts: { all: number; published: number; hidden: number; out: number }; categories: string[] }
+
+export * from "./order-workflow.js";

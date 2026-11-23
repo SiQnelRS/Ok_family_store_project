@@ -49,3 +49,7 @@ Se actualizaron dependencias HTTP compatibles y se fija temporalmente multer 2.5
 ## Clientes
 
 En **Clientes** puedes buscar cuentas por nombre o correo. **Desactivar** cierra sus sesiones e impide que ingresen hasta que pulses **Reactivar**; las sesiones anteriores no se restauran. Cada cambio de estado queda registrado.
+
+## Operar pedidos
+
+Abre **Pedidos** para filtrar por estado y consultar artículos, importe y destino. Puedes cancelar un pedido pendiente y liberar sus existencias. Para un pedido pagado, pulsa **Empezar preparación**. En recogida, marca el pedido listo y confirma cuando el cliente lo recoja. Para entrega a domicilio, marca listo para envío, en reparto y finalmente entregado. Los cambios quedan registrados y el cliente ve el estado en Mis pedidos. La acreditación del pago corresponde al proceso de cobro.

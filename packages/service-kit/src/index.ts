@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 export * from "./admin-security.js";
 export * from "./admin-validation.js";
 export * from "./customer-validation.js";
+export * from "./commerce-validation.js";
 export * from "./admin-customer-validation.js";
 
 export { CatalogQueryDto, ProductSlugDto } from "./validation.js";
@@ -82,7 +83,7 @@ export async function createHttpApplication(
   app.useBodyParser("json", { limit: "8mb" });
   app.use(helmet());
   app.use((request: { path: string }, response: { setHeader: (key: string, value: string) => void }, next: () => void) => {
-    if (/^\/api\/(?:admin|auth\/(?:admin|customer))(?:\/|$)/.test(request.path)) response.setHeader("Cache-Control", "no-store");
+    if (/^\/api\/(?:admin|shop|auth\/(?:admin|customer))(?:\/|$)/.test(request.path)) response.setHeader("Cache-Control", "no-store");
     next();
   });
   app.enableCors({

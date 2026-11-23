@@ -166,6 +166,7 @@ model Order {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   items OrderItem[]
+  operations OrderOperation[]
   payments Payment[]
 
   @@index([userId, createdAt])
@@ -253,4 +254,27 @@ model CustomerStatusAudit {
   active Boolean
   createdAt DateTime @default(now())
   @@index([customerId, createdAt])
+}
+
+model CartItem {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  productId String @db.Uuid
+  slug String @db.VarChar(180)
+  quantity Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, slug])
+  @@index([userId, createdAt])
+}
+
+model OrderOperation {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  actorId String @db.Uuid
+  previous OrderStatus
+  next OrderStatus
+  createdAt DateTime @default(now())
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  @@index([orderId, createdAt])
 }

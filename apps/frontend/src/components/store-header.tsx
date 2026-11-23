@@ -89,18 +89,7 @@ export function StoreHeader() {
               </span>
             </button>
             <Link className="account-header-link desktop-only" href="/cuenta">MI CUENTA</Link>
-            <button
-              className="future-action"
-              type="button"
-              disabled
-              aria-label="Bolsa de lotes, próximamente"
-              title="Las compras en línea estarán disponibles próximamente"
-            >
-              <span className="desktop-only">BOLSA DE LOTES</span>
-              <span className="mobile-only bag-glyph" aria-hidden="true">
-                ♧
-              </span>
-            </button>
+            <Link className="header-bag" href="/carrito" aria-label="Mi carrito"><span className="desktop-only">CARRITO DE LOTES</span><span className="mobile-only bag-glyph" aria-hidden="true">♧</span></Link>
           </div>
         </div>
         {menuOpen && (
@@ -184,14 +173,7 @@ export function StoreHeader() {
         <Link href="/cuenta" aria-current={pathname === "/cuenta" ? "page" : undefined} onClick={closePanels}>
           <span aria-hidden="true">♙</span>Cuenta
         </Link>
-        <button
-          type="button"
-          disabled
-          title="Próximamente"
-          aria-label="Bolsa, próximamente"
-        >
-          <span aria-hidden="true">♧</span>Bolsa
-        </button>
+        <Link href="/carrito" aria-current={pathname === "/carrito" ? "page" : undefined} onClick={closePanels}><span aria-hidden="true">♧</span>Carrito</Link>
       </nav>
     </>
   );
