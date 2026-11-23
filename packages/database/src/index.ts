@@ -8,3 +8,5 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL): Pr
   const adapter = new PrismaPg({ connectionString: databaseUrl, connectionTimeoutMillis: 3000, statement_timeout: 5000, query_timeout: 6000 });
   return new PrismaClient({ adapter });
 }
+
+export { holdCatalogUnit, finishCatalogReservation } from "./reservations.js";

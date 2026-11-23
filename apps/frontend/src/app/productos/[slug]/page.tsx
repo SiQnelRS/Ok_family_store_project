@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AddToCart } from "../../../components/add-to-cart";
 import { notFound } from "next/navigation";
 import { formatMoney } from "@ok-family/shared";
 import {
@@ -113,18 +114,7 @@ export default async function ProductPage({
             </div>
           </dl>
           <AvailabilityBadge product={product} />
-          <button
-            className="button purchase-unavailable"
-            type="button"
-            disabled
-            aria-describedby="purchase-note"
-          >
-            COMPRAS EN LÍNEA · PRÓXIMAMENTE
-          </button>
-          <p className="detail-note" id="purchase-note">
-            Por ahora puedes explorar el catálogo. Las compras en línea estarán
-            disponibles en una próxima etapa.
-          </p>
+          <AddToCart slug={product.slug} available={product.availableQuantity} />
           {product.isDemo && (
             <p className="demo-notice">
               <strong>PUBLICACIÓN DE EJEMPLO.</strong> Este artículo no

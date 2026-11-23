@@ -18,6 +18,9 @@ import {
 } from "@nestjs/common";
 import {
   AdminIdDto,
+  AddressDto,
+  CartItemDto, CheckoutDto, OrderListDto, OrderChangeDto,
+  CartSlugDto,
   AdminCustomerQueryDto,
   AdminCustomerStatusDto,
   AdminLoginDto,
@@ -38,7 +41,7 @@ class AdminProxy {
     @Inject(ADMIN_DEPS) private readonly dependencies: GatewayDependencies,
   ) {}
   async json(
-    service: "authUrl" | "catalogUrl",
+    service: "authUrl" | "catalogUrl" | "commerceUrl",
     path: string,
     method: string,
     authorization?: string,
@@ -131,6 +134,18 @@ class CustomerAuthProxyController {
   @Post("password") @HttpCode(200) password(@Headers("authorization") token: string | undefined, @Body() input: CustomerPasswordDto) { return this.proxy.json("authUrl", "/api/auth/customer/password", "POST", token, input); }
   @Post("logout") @HttpCode(200) logout(@Headers("authorization") token?: string) { return this.proxy.json("authUrl", "/api/auth/customer/logout", "POST", token); }
 }
+@Controller("admin/orders")
+class AdminOrdersProxy {
+  constructor(private readonly proxy: AdminProxy) {}
+  @Get() list(@Query() query: OrderListDto, @Headers("authorization") token?: string) {
+    const params = new URLSearchParams({page:String(query.page ?? 1)});
+    if(query.status) params.set("status",query.status);
+    return this.proxy.json("commerceUrl","/api/admin/orders?"+params,"GET",token);
+  }
+  @Patch(":id") change(@Param() params: AdminIdDto, @Body() input: OrderChangeDto, @Headers("authorization") token?: string) {
+    return this.proxy.json("commerceUrl","/api/admin/orders/"+params.id,"PATCH",token,input);
+  }
+}
 @Controller("admin/customers")
 class AdminCustomersProxyController {
   constructor(private readonly proxy: AdminProxy) {}
@@ -140,6 +155,23 @@ class AdminCustomersProxyController {
     return this.proxy.json("authUrl", "/api/admin/customers?" + params, "GET", token);
   }
   @Patch(":id") change(@Param() params: AdminIdDto, @Body() body: AdminCustomerStatusDto, @Headers("authorization") token?: string) { return this.proxy.json("authUrl", "/api/admin/customers/" + params.id, "PATCH", token, body); }
+}
+@Controller("shop")
+class ShopProxyController {
+  constructor(private readonly proxy: AdminProxy) {}
+  @Get("orders") orders(@Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders", "GET", token);}
+  @Post("orders") checkout(@Body() input: CheckoutDto, @Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders", "POST", token, input);}
+  @Post("orders/:id/cancel") cancel(@Param() params: AdminIdDto, @Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders/" + params.id + "/cancel", "POST", token, {});}
+  @Get("cart") cart(@Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/cart", "GET", token); }
+  @Post("cart") put(@Body() input: CartItemDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/cart", "POST", token, input); }
+  @Delete("cart/:slug") remove(@Param() input: CartSlugDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/cart/" + input.slug, "DELETE", token); }
+  @Get("addresses") addresses(@Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses", "GET", token); }
+  @Post("addresses") create(@Body() input: AddressDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses", "POST", token, input); }
+  @Patch("addresses/:id") update(@Param() params: AdminIdDto, @Body() input: AddressDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses/" + params.id, "PATCH", token, input); }
+  @Delete("addresses/:id") delete(@Param() params: AdminIdDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses/" + params.id, "DELETE", token); }
+  @Get("addresses/:id/quote") quote(@Param() params: AdminIdDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses/" + params.id + "/quote", "GET", token); }
+  @Get("pickup/quote") pickupQuote(@Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/pickup/quote", "GET", token); }
+  @Get("addresses/:id/coverage") coverage(@Param() params: AdminIdDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/addresses/" + params.id + "/coverage", "GET", token); }
 }
 @Controller("admin/products")
 class ProductsProxyController {
@@ -241,6 +273,8 @@ export function adminGatewayModule(
     controllers: [
       AuthProxyController,
       CustomerAuthProxyController,
+      ShopProxyController,
+      AdminOrdersProxy,
       AdminCustomersProxyController,
       ProductsProxyController,
       ImagesProxyController,
