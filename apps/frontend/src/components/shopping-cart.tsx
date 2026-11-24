@@ -138,7 +138,7 @@ export function ShoppingCart() {
           </>}
           {quoteError && <p className="account-error" role="alert">{quoteError}</p>}
         </>}
-        {cart.items.length > 0 && <><p>Al crear el pedido apartamos tus artículos durante 15 minutos. El cobro en línea estará disponible más adelante.</p><button type="button" className="button" disabled={!!busy || quote?.status !== "available"} onClick={() => void reserve()}>{busy === "checkout" ? "Reservando…" : "Crear pedido y reservar"}</button></>}
+        {cart.items.length > 0 && <><p>Al crear el pedido apartamos tus artículos durante 15 minutos. Consulta tu reserva en Mis pedidos.</p><button type="button" className="button" disabled={!!busy || quote?.status !== "available"} onClick={() => void reserve()}>{busy === "checkout" ? "Reservando…" : "Crear pedido y reservar"}</button></>}
         <Link className="text-link account-back" href="/cuenta/pedidos">Mis pedidos →</Link>
       </aside>
     </div>}

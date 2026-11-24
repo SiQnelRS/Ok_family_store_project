@@ -161,6 +161,7 @@ class ShopProxyController {
   constructor(private readonly proxy: AdminProxy) {}
   @Get("orders") orders(@Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders", "GET", token);}
   @Post("orders") checkout(@Body() input: CheckoutDto, @Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders", "POST", token, input);}
+  @Post("orders/:id/pay") pay(@Param() params: AdminIdDto, @Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders/" + params.id + "/pay", "POST", token, {});}
   @Post("orders/:id/cancel") cancel(@Param() params: AdminIdDto, @Headers("authorization") token?: string) {return this.proxy.json("commerceUrl", "/api/shop/orders/" + params.id + "/cancel", "POST", token, {});}
   @Get("cart") cart(@Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/cart", "GET", token); }
   @Post("cart") put(@Body() input: CartItemDto, @Headers("authorization") token?: string) { return this.proxy.json("commerceUrl", "/api/shop/cart", "POST", token, input); }

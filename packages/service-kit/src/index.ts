@@ -70,6 +70,7 @@ export function healthModule(service: string): DynamicModule {
 
 export interface HttpApplicationOptions {
   logger?: false | LogLevel[];
+  rawBody?: boolean;
   webOrigin?: string;
 }
 
@@ -78,6 +79,7 @@ export async function createHttpApplication(
   options: HttpApplicationOptions = {},
 ): Promise<INestApplication> {
   const app = await NestFactory.create<NestExpressApplication>(rootModule, {
+    rawBody: options.rawBody ?? false,
     logger: options.logger ?? ["error", "warn", "log"],
   });
   app.useBodyParser("json", { limit: "8mb" });

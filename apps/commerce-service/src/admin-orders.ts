@@ -13,13 +13,14 @@ export class AdminOrders {
   async list({page = 1, status}: OrderListDto) {
     const orders = await this.db.order.findMany({
       where: {status}, orderBy: [{createdAt:"desc"}, {id:"desc"}], skip: (page-1)*20, take: 21,
-      include: {items:true, operations:{orderBy:{createdAt:"desc"}}},
+      include: {items:true, payments:{orderBy:{createdAt:"desc"},take:1,select:{status:true,stripePaymentId:true,checkoutSessionId:true}}, operations:{orderBy:{createdAt:"desc"}}},
     });
     const rows = orders.slice(0,20);
     const users = await this.db.user.findMany({where:{id:{in:rows.map(row => row.userId)}},select:{id:true,name:true,email:true}});
     const reservations = await this.db.reservation.findMany({where:{orderId:{in:rows.map(row => row.id)}},select:{orderId:true,status:true,expiresAt:true}});
     return {hasMore: orders.length > 20, items: rows.map(row => ({
       id:row.id, status:String(row.status), createdAt:row.createdAt, totalInCents:row.totalInCents, shippingInCents:row.shippingInCents,
+      payment:row.payments[0] ? {status:String(row.payments[0].status), reference:row.payments[0].stripePaymentId ?? row.payments[0].checkoutSessionId} : null,
       destination:row.shippingAddressSnapshot, items:row.items.map(i=>({name:i.productName,quantity:i.quantity,amount:i.subtotalInCents})),
       customer:users.find(user=>user.id===row.userId), reservation:reservations.find(r=>r.orderId===row.id)?.status.toString(),
       operations:row.operations.map(op=>({status:String(op.next),date:op.createdAt})),

@@ -44,3 +44,8 @@ export interface AdminProduct extends ProductSummary { published: boolean; reser
 export interface AdminCatalogResponse { items: AdminProduct[]; total: number; page: number; pageSize: number; counts: { all: number; published: number; hidden: number; out: number }; categories: string[] }
 
 export * from "./order-workflow.js";
+
+export function paymentLabel(status: string) {
+  const labels: Record<string,string> = {PENDIENTE:"En espera de pago", EXITOSO:"Pago recibido", FALLIDO:"Pago no completado", PENDIENTE_REEMBOLSO:"Reembolso en proceso", REEMBOLSADO:"Reembolsado", EN_REVISION:"Pago en revisión"};
+  return labels[status] ?? status;
+}

@@ -8,5 +8,5 @@ import type { HttpApplicationOptions } from "@ok-family/service-kit";
 class AppModule {}
 
 export function createApp(options?: HttpApplicationOptions) {
-  return createHttpApplication(AppModule, options);
+  return createHttpApplication(AppModule, {...options, rawBody:true});
 }
