@@ -15,7 +15,7 @@ Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un
 - Validación de parámetros, cabeceras de seguridad, CORS y límite de solicitudes.
 - Compilación, comprobación de tipos, análisis estático y pruebas automatizadas.
 
-**Ya hay registro e inicio de sesión de clientes con correo y contraseña. Todavía no hay recuperación de contraseña, cobro ni webhooks. La creación de pedidos aparta las existencias en PostgreSQL.** Esta base no está lista para recibir compras reales.
+**Ya hay registro e inicio de sesión de clientes con correo y contraseña. El cobro con tarjeta y los webhooks se ejecutan en modo de prueba. Todavía no hay recuperación de contraseña. La creación de pedidos aparta las existencias en PostgreSQL.** Esta base no está lista para recibir compras reales.
 
 ## Requisitos
 
@@ -66,7 +66,7 @@ En /cuenta los clientes pueden registrarse, iniciar sesión y cerrarla. La contr
 
 En /carrito, los clientes pueden elegir entre entrega a domicilio y recoger en tienda. Para recoger, el sitio muestra la dirección del local —Boulevard de las Rosas 233, Jardines de Durango, Durango— y su horario publicado, de 12:00 p. m. a 8:30 p. m. Esta opción no añade costo de envío.
 
-El carrito consulta los precios y existencias actuales del catálogo y calcula los importes en el servidor. Al pulsar **Crear pedido y reservar**, Commerce guarda los precios, el destino y las cantidades, aparta las unidades durante 15 minutos y vacía el carrito en una transacción. En /cuenta/pedidos puedes ver y cancelar el pedido. Commerce libera las reservas vencidas al iniciar y cada 15 segundos. El cobro sigue pendiente.
+El carrito consulta los precios y existencias actuales del catálogo y calcula los importes en el servidor. Al pulsar **Crear pedido y reservar**, Commerce guarda los precios, el destino y las cantidades, aparta las unidades durante 15 minutos y vacía el carrito en una transacción. En /cuenta/pedidos puedes ver y cancelar el pedido. Commerce libera las reservas vencidas al iniciar y cada 15 segundos. Consulta [la guía de Stripe Checkout para desarrollo y despliegue](stripe-guide.md) para pagar un pedido.
 
 La cobertura y las tarifas de entrega local están pendientes de definir. Cuando el negocio facilite sus zonas y tarifas, configura LOCAL_DELIVERY_RATES_JSON en el entorno de Commerce con un objeto que relacione códigos postales de cinco dígitos con importes en centavos, por ejemplo: LOCAL_DELIVERY_RATES_JSON={"34000":8000}. Ese valor es únicamente un ejemplo técnico, no una tarifa vigente. Reinicia Commerce tras cambiar la configuración. Una configuración vacía muestra cobertura pendiente; un código ausente en una configuración no vacía se considera fuera de cobertura.
 ## Panel del dueño
@@ -111,7 +111,7 @@ npm.cmd run test:database
 npm.cmd run test:admin
 ```
 
-Compila antes de ejecutar las pruebas: utilizan módulos compilados. `test:database` requiere PostgreSQL disponible y las migraciones aplicadas; ejecútalo sobre la base local de desarrollo o una base dedicada a pruebas. Verifica el recorrido de catálogo y gateway con PostgreSQL. Las pruebas actuales no verifican reservas, pagos ni doble venta.
+Compila antes de ejecutar las pruebas: utilizan módulos compilados. `test:database` requiere PostgreSQL disponible y las migraciones aplicadas; ejecútalo sobre la base local de desarrollo o una base dedicada a pruebas. Verifica el recorrido de catálogo y gateway con PostgreSQL. Las pruebas específicas de reservas y pagos usan PostgreSQL local.
 
 | Comando | Uso |
 | --- | --- |
@@ -147,7 +147,7 @@ docs/                 Decisiones y próximos pasos
 
 Los servicios escuchan en `127.0.0.1` por defecto. `WEB_ORIGIN` configura el origen permitido por CORS; no sustituye la autenticación. El límite de solicitudes se mantiene en memoria por proceso. Antes de desplegar habrá que implementar autorización, gestión de secretos, HTTPS y los controles del entorno.
 
-Las variables de JWT, Stripe, Google y almacenamiento de objetos son espacios reservados para etapas futuras. No necesitas proporcionar esas credenciales para explorar el catálogo.
+Las variables de JWT, Google y almacenamiento de objetos son espacios reservados para etapas futuras. No necesitas proporcionar esas credenciales para explorar el catálogo.
 
 Aunque los servicios se ejecutan por separado, comparten provisionalmente un cliente Prisma y un esquema físico. Los límites de propiedad están documentados, pero aún no existe aislamiento de persistencia entre servicios.
 

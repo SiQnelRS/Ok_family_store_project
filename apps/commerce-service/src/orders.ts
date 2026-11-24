@@ -2,6 +2,7 @@ import { ConflictException, Injectable, Logger, NotFoundException } from "@nestj
 import { createHash } from "node:crypto";
 import { createDatabaseClient, finishCatalogReservation, holdCatalogUnit, type Prisma } from "@ok-family/database";
 import type { CheckoutDto } from "@ok-family/service-kit";
+import { stripeCheckoutEnabled, stripeLivemode } from "./stripe-client.js";
 import { localCoverage } from "./coverage.js";
 
 export function cartVersion(items: {product: {id: string; priceInCents: number} | null; quantity: number}[]) {
@@ -34,10 +35,19 @@ export class OrdersService {
       });
     }
   }
-  async list(userId: string): Promise<Array<Prisma.OrderGetPayload<{include: {items: true}}> & {reservation?: Prisma.ReservationGetPayload<{select: {orderId: true; status: true; expiresAt: true}}> }>> {
+  async list(userId: string): Promise<Array<Prisma.OrderGetPayload<{include: {items: true}}> & {canPay:boolean; paymentMode:"test" | "live"; paymentStatus:string | null; reservation?: Prisma.ReservationGetPayload<{select: {orderId: true; status: true; expiresAt: true}}> }>> {
     const orders = await this.db.order.findMany({where: {userId}, orderBy: {createdAt: "desc"}, include: {items: true}, take: 50});
     const reservations = await this.db.reservation.findMany({where: {orderId: {in: orders.map(order => order.id)}}, select: {orderId: true, status: true, expiresAt: true}});
-    return orders.map(order => ({...order, reservation: reservations.find(row => row.orderId === order.id)}));
+    const payments = await this.db.payment.findMany({where:{orderId:{in:orders.map(order => order.id)}}, select:{orderId:true,status:true,stripeLivemode:true},orderBy:{createdAt:"desc"}});
+    return orders.map(order => {
+      const reservation = reservations.find(row => row.orderId === order.id);
+      const payment = payments.find(row => row.orderId === order.id);
+      const livemode = stripeLivemode();
+      const canPay = stripeCheckoutEnabled() && order.status === "PENDIENTE_PAGO"
+        && reservation?.status === "ACTIVA" && reservation.expiresAt > new Date()
+        && (!payment || (payment.status === "PENDIENTE" && payment.stripeLivemode === livemode));
+      return {...order, reservation, paymentStatus:payment?.status ?? null, canPay, paymentMode:livemode ? "live" : "test"};
+    });
   }
   async cancel(userId: string, id: string) {
     return this.db.$transaction(async tx => {

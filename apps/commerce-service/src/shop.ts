@@ -1,3 +1,5 @@
+import { PaymentsService, StripeWebhookController } from "./payments.js";
+import { StripeClient } from "./stripe-client.js";
 import { OrdersService, cartVersion } from "./orders.js";
 import { localCoverage } from "./coverage.js";
 import { BadRequestException, Body, CanActivate, ConflictException, Controller, Delete, ExecutionContext, Get, Injectable, Module, NotFoundException, Param, Patch, Post, Req, ServiceUnavailableException, UnauthorizedException, UseGuards } from "@nestjs/common";
@@ -111,7 +113,8 @@ class CustomerGuard implements CanActivate {
 @Controller("shop")
 @UseGuards(CustomerGuard)
 class ShopController {
-  constructor(private readonly shop: ShopService, private readonly orders: OrdersService) {}
+  constructor(private readonly shop: ShopService, private readonly orders: OrdersService, private readonly payments: PaymentsService) {}
+  @Post("orders/:id/pay") pay(@Req() req: CustomerRequest, @Param() params: AdminIdDto) {return this.payments.start(req.customerId,params.id);}
   @Get("orders") listOrders(@Req() req: CustomerRequest) {return this.orders.list(req.customerId);}
   @Post("orders") checkout(@Req() req: CustomerRequest, @Body() input: CheckoutDto) {return this.orders.create(req.customerId, input);}
   @Post("orders/:id/cancel") cancel(@Req() req: CustomerRequest, @Param() params: AdminIdDto) {return this.orders.cancel(req.customerId, params.id);}
@@ -126,5 +129,5 @@ class ShopController {
   @Get("pickup/quote") pickupQuote(@Req() req: CustomerRequest) { return this.shop.pickupQuote(req.customerId); }
   @Get("addresses/:id/coverage") coverage(@Req() req: CustomerRequest, @Param() params: AdminIdDto) { return this.shop.coverage(req.customerId, params.id); }
 }
-@Module({controllers: [ShopController], providers: [ShopService, CustomerGuard, OrdersService]})
+@Module({controllers: [ShopController, StripeWebhookController], providers: [StripeClient, PaymentsService, ShopService, CustomerGuard, OrdersService]})
 export class ShopModule {}

@@ -12,6 +12,8 @@ import {createApp as gatewayApp} from "../apps/api-gateway/dist/app.js";
 test("carrito, direcciones y cobertura conservan propiedad y datos actuales", async () => {
   const db=createDatabaseClient(), apps=[], marker=randomUUID(), password="Clave temporal "+marker;
   const oldAuth=process.env.AUTH_SERVICE_URL, oldCatalog=process.env.CATALOG_SERVICE_URL, oldRates=process.env.LOCAL_DELIVERY_RATES_JSON;
+  const oldWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  delete process.env.STRIPE_WEBHOOK_SECRET;
   let first, second, admin, product, addressId;
   async function listen(app){apps.push(app); await app.listen(0,"127.0.0.1"); return app.getUrl();}
   async function request(base,path,method="GET",body,token){const r=await fetch(base+path,{method,headers:{"content-type":"application/json",...(token?{authorization:"Bearer "+token}:{})},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,body:await r.json()};}
@@ -59,6 +61,10 @@ test("carrito, direcciones y cobertura conservan propiedad y datos actuales", as
     const checkout = {method:"delivery",addressId,key:randomUUID(),version:quote.body.version,totalInCents:quote.body.totalInCents};
     const order = await request(gateway,"/api/shop/orders","POST",checkout,token);
     assert.equal(order.status,201,JSON.stringify(order.body));
+    const payPath = "/api/shop/orders/" + order.body.orderId + "/pay";
+    assert.equal((await request(gateway,payPath,"POST",{})).status,401);
+    assert.equal((await request(gateway,payPath,"POST",{},other)).status,404);
+    assert.equal((await request(gateway,payPath,"POST",{},token)).status,503);
     const orderPath = "/api/shop/orders/"+order.body.orderId+"/cancel";
     assert.equal((await request(gateway,orderPath,"POST",{},other)).status,404);
     const history = await request(gateway,"/api/shop/orders","GET",undefined,token);
@@ -105,6 +111,7 @@ test("carrito, direcciones y cobertura conservan propiedad y datos actuales", as
     assert.equal((await request(gateway,"/api/shop/cart/"+product.slug,"DELETE",undefined,token)).status,200);
     assert.equal((await request(gateway,"/api/shop/addresses/"+addressId,"DELETE",undefined,token)).status,200);
   } finally {
+    if (oldWebhookSecret !== undefined) process.env.STRIPE_WEBHOOK_SECRET = oldWebhookSecret;
     if(first || second){const ids=[first?.id,second?.id,admin?.id].filter(Boolean); await db.reservation.deleteMany({where:{userId:{in:ids}}}); await db.orderItem.deleteMany({where:{order:{userId:{in:ids}}}}); await db.order.deleteMany({where:{userId:{in:ids}}}); await db.cartItem.deleteMany({where:{userId:{in:ids}}}); await db.address.deleteMany({where:{userId:{in:ids}}}); await db.user.deleteMany({where:{id:{in:ids}}});}
     if(product) await db.product.deleteMany({where:{id:product.id}});
     for(const app of apps.reverse()) await app.close();

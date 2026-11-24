@@ -28,6 +28,7 @@
     "test:admin": "node --test tests/admin.integration.test.mjs",
     "test:customers": "node --test tests/customer-admin.integration.test.mjs",
     "test:account": "node --test tests/customer-account.integration.test.mjs",
+    "test:payments": "node --test tests/payments.integration.test.mjs",
     "test:shop": "node --test tests/shop.integration.test.mjs"
   },
   "devDependencies": {
@@ -44,7 +45,8 @@
   },
   "overrides": {
     "@prisma/config": {
-      "deepmerge-ts": "8.0.2"
+      "deepmerge-ts": "8.0.2",
+      "effect": "3.22.1"
     },
     "prisma": {
       "mysql2": "3.24.5"

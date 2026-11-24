@@ -40,3 +40,4 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run test:database
+      - run: npm run test:payments

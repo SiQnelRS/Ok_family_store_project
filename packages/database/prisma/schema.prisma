@@ -46,6 +46,8 @@ enum PaymentStatus {
   PENDIENTE
   EXITOSO
   FALLIDO
+  PENDIENTE_REEMBOLSO
+  EN_REVISION
   REEMBOLSADO
 }
 
@@ -191,6 +193,11 @@ model OrderItem {
 model Payment {
   id String @id @default(uuid()) @db.Uuid
   orderId String @db.Uuid
+  checkoutSessionId String? @unique
+  refundId String?
+  nextSyncAt DateTime?
+  stripeLivemode Boolean @default(false)
+  @@index([stripeLivemode, status, nextSyncAt])
   stripePaymentId String? @unique
   idempotencyKey String @unique @db.VarChar(200)
   amountInCents Int
@@ -203,7 +210,7 @@ model Payment {
   @@index([orderId])
 }
 
-/// eventId único permite implementar recepción idempotente; no hay webhook activo.
+/// El efecto del webhook y su eventId se confirman en la misma transacción.
 model WebhookEvent {
   id String @id @default(uuid()) @db.Uuid
   eventId String @unique

@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { formatMoney, orderLabel, orderLabels, type OrderState } from "@ok-family/shared";
+import { formatMoney, paymentLabel, orderLabel, orderLabels, type OrderState } from "@ok-family/shared";
 import { adminRead } from "../../../../lib/admin";
 import { OrderAction } from "../../../../components/admin/order-action";
 
 type Row = {
   id:string;status:OrderState;createdAt:string;totalInCents:number;shippingInCents:number;
   destination:Record<string,string> | null;customer?:{name:string;email:string};reservation?:string;
+  payment?:{status:string; reference:string | null};
   items:{name:string;quantity:number;amount:number}[];operations:{date:string;status:OrderState}[];
 };
 const date = (value:string) => new Intl.DateTimeFormat("es-MX",{dateStyle:"medium",timeStyle:"short",timeZone:"America/Monterrey"}).format(new Date(value));
@@ -27,6 +28,7 @@ export default async function AdminOrdersPage({searchParams}:{searchParams:Promi
         <p>{date(row.createdAt)} · {pickup?"Recogida en tienda":"Entrega a domicilio"}</p>
         <p><strong>{row.customer?.name ?? "Cliente"}</strong> {row.customer?.email}</p>
         <p>{row.reservation==="EXPIRADA"?"Reserva vencida":orderLabel(row.status,pickup)} · {formatMoney(row.totalInCents)} MXN</p>
+        {row.payment && <p>{paymentLabel(row.payment.status)}{row.payment.reference && <small> · {row.payment.reference}</small>}</p>}
         <details><summary>Ver artículos y entrega</summary>
           <ul>{row.items.map((item,i)=><li key={i}>{item.quantity} × {item.name} · {formatMoney(item.amount)} MXN</li>)}</ul>
           <p>Envío: {formatMoney(row.shippingInCents)} MXN</p>

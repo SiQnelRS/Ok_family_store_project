@@ -16,6 +16,6 @@ export function AddToCart({slug, available}: {slug: string; available: number}) 
   return <div className="add-to-cart"><button className="button purchase-unavailable" type="button" disabled={busy || available < 1} onClick={add}>{busy ? "AGREGANDO…" : available < 1 ? "NO DISPONIBLE" : "AGREGAR AL CARRITO"}</button>
     {login && <p className="detail-note">Para guardar tu carrito, <Link className="text-link" href="/cuenta">inicia sesión o crea una cuenta</Link>.</p>}
     {message && <p className="detail-note" role="status">{message} {added && <Link className="text-link" href="/carrito">Ver mi carrito →</Link>}</p>}
-    <p className="detail-note">Los artículos en tu carrito no están apartados. Las compras en línea estarán disponibles próximamente.</p>
+    <p className="detail-note">Los artículos en tu carrito no están apartados.</p>
   </div>;
 }
