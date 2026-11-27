@@ -1,0 +1,24 @@
+# PostgreSQL aislado para ensayar el paquete de despliegue.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: okfamily
+      POSTGRES_DB: okfamily
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD para el ensayo local}
+    volumes:
+      - rehearsal_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "okfamily", "-d", "okfamily", "-h", "127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  rehearsal_pgdata:

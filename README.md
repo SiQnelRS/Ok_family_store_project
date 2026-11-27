@@ -25,6 +25,10 @@ Incluye un catálogo de lectura conectado a PostgreSQL, una interfaz Next.js, un
 
 Docker Compose inicia únicamente PostgreSQL. Las aplicaciones se ejecutan en el equipo con npm. El puerto 55432 del equipo corresponde al 5432 del contenedor.
 
+## Despliegue
+
+Consulta la [guía de Docker Compose](deploy/README.md) para ensayar el arranque completo y preparar el despliegue en Google Cloud.
+
 ## Arranque local
 
 Desde la raíz del proyecto, en PowerShell:
