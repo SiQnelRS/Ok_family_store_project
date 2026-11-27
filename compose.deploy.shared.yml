@@ -1,0 +1,26 @@
+# Use the original development PostgreSQL and its uploaded photos for the local demo.
+services:
+  migrate:
+    networks: [default, development]
+  auth:
+    networks: [default, development]
+  catalog:
+    networks: [default, development]
+    volumes:
+      - type: bind
+        source: ${ORIGINAL_UPLOAD_DIR:-./.data/uploads}
+        target: /var/lib/ok-family/uploads
+        bind:
+          create_host_path: false
+  commerce:
+    networks: [default, development]
+    environment:
+      STRIPE_MODE: test
+      STRIPE_CHECKOUT_ENABLED: "false"
+      STRIPE_SECRET_KEY: ""
+      STRIPE_WEBHOOK_SECRET: ""
+
+networks:
+  development:
+    external: true
+    name: ok-family_default
